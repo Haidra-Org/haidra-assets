@@ -1,0 +1,31 @@
+name: Unstable Tests
+
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+    paths:
+      - '**.py'
+      - '**.json'
+      - '**.md'
+      - 'tox.ini'
+      - '.github/workflows/maintests.yml'
+      - '.github/workflows/prtests.yml'
+      - '.github/workflows/release.yml'
+      - '.pre-commit-config.yaml'
+      - 'requirements.txt'
+      - 'requirements.dev.txt'
+      - 'requirements.docs.txt'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --all-files
