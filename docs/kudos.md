@@ -19,8 +19,6 @@ This means that **kudos are the fundamental unit of exchange of resources on the
   - The more kudos you have in your account, the higher priority your job will have in the queue. Anonymous users start with 0 kudos, while registered users have at least 25, giving them an advantage when queuing jobs.
   - If two users have the same kudos and they were to submit a job at the same time, they can expect that both jobs would return in about the same amount of time.
 
-![Kudos Flow Diagram](kudos_flow.png)
-
 ## Priority System
 The kudos-based priority system ensures fair access to the AI Horde's resources. When a user submits a request, their position in the job queue is determined by the number of kudos in their account. Users with more kudos will have their jobs processed sooner, while those with fewer kudos may experience longer waiting times.
 
