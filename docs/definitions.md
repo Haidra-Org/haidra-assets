@@ -202,6 +202,9 @@ An image matching the resolution of a source image sent to [img2img](#img2img) o
 ### img2text
 Processing an Image via ML [Models](#model) and figuring out information about it, such as a potential caption or whether it's NSFW. Also known as [Interrogation](#Interrogation).
 
+### Image Generation
+Any of [text2img](#text2img), [text2img](#text2img) or [inpainting](#inpainting).
+
 ### CLIP
 CLIP models are used in the [tokenization](#tokenization) of prompts for many image models. CLIP [interrogation](#Interrogation) is a technique, using the same models, which can detect whether or not an image contains a particular set of keywords. The AI-Horde uses CLIP interrogation to detect harmful, illegal, or NSFW content.
 
