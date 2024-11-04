@@ -1,0 +1,83 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.2",
+    "title": "Service Info API",
+    "description": "An API to provide service information including software details and API specifications."
+  },
+  "components": {
+    "schemas": {
+      "ServiceInfo": {
+        "type": "object",
+        "required": ["version", "software", "api"],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "The version of the service info specification."
+          },
+          "software": {
+            "type": "object",
+            "required": ["name", "version", "repository", "homepage"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the software."
+              },
+              "version": {
+                "type": "string",
+                "description": "The version of the software."
+              },
+              "repository": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URL of the software's source code repository."
+              },
+              "homepage": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URL to the software's homepage."
+              },
+              "logo": {
+                "type": "string",
+                "format": "uri",
+                "description": "A URL to an image of the software logo.",
+                "nullable": true
+              }
+            }
+          },
+          "api": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["name", "version", "rel_url", "documentation"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the software API."
+                },
+                "version": {
+                  "type": "string",
+                  "description": "The version of the API implemented by the software."
+                },
+                "base_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "The absolute URL to the API base.",
+                  "nullable": true
+                },
+                "rel_url": {
+                  "type": "string",
+                  "description": "A relative URL to the API base."
+                },
+                "documentation": {
+                  "type": "string",
+                  "description": "A relative or absolute URL to the API documentation."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
