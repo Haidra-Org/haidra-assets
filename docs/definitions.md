@@ -16,7 +16,7 @@ See also [horde-sdk](#horde-sdk) for the official Python SDK for interacting wit
 ### Kudos
 > See also the [Kudos detailed explanation](kudos.md).
 
-`Kudos` is the priority system that determines which [user](#user)'s request is processed first. [Workers](#worker) earn kudos when they complete a [job](#job), and users spend kudos to make requests. Kudos can be traded but not sold. Users cannot go below a certain minimum, and they can still submit requests even when they have reached their minimum balance. 
+`Kudos` is the priority system that determines which [user](#user)'s request is processed first. [Workers](#worker) earn kudos when they complete a [job](#job), and users spend kudos to make requests. Kudos can be traded but not sold. Users cannot go below a certain minimum, and they can still submit requests even when they have reached their minimum balance.
 
 ### Request
 The [payload](#payload) sent by the [user](#user) via their chosen [integration](#integration). A request can be for one or more [jobs](#job). Each request receives a unique ID (UUID) for the user who requested it to track its status.
@@ -25,7 +25,7 @@ The [payload](#payload) sent by the [user](#user) via their chosen [integration]
 Each [request](#request) is split into multiple `jobs` so that it can be better parallelized to different [workers](#worker). Each job has a unique ID (UUID) which is not the same as the request UUID. Each job is assigned only to the worker which picked it up and allows the user to track which worker fulfilled it. A worker cannot see any information about the [user](#user) who requested a specific job.
 
 ### Payload
-The `Payload` refers to data sent to or received from the [API](#api). 
+The `Payload` refers to data sent to or received from the [API](#api).
 
 For example, a payload for a [text2img](#text2img) [request](#request) would include the [user](#user)'s [API key](#api-key), the prompt, the number of images, the resolution, and the required [model](#model). In contrast, a payload received by a [user](#user) would contain images or the resulting text (if the request was a [text2text request](#text2text)).
 
@@ -47,7 +47,7 @@ A protocol allowing an [AI Horde](#ai-horde) to identify a [user](#user) using a
 
 ### Pseudonymous
 > **Important**: Pseudonymous accounts cannot be recovered if the user misplaces their [API key](#api-key). If you lose your API key with a pseudonymous account **it will be lost forever**.
-> 
+>
 An account registered without logging in with the [oauth2](#oauth2) services.
 
 ### Anonymous
@@ -108,10 +108,10 @@ An extra amount of kudos burnt whenever a request is put in the horde. They are 
 Any software that uses the [AI Horde](#ai-horde) [API](#api) to provide functionality is considered an `Integration`.
 
 ### Frontend
-The `Frontend` is the interface that a [user](#user) directly interacts with to access the [AI Horde](#ai-horde). It translates user inputs into an [API](#api) [payload](#payload). A frontend can be written in any programming language and may run locally, in a browser, or as part of another service, such as a [Bot](#bot). Also known as [Client](#frontend) or [UI](#frontend). 
+The `Frontend` is the interface that a [user](#user) directly interacts with to access the [AI Horde](#ai-horde). It translates user inputs into an [API](#api) [payload](#payload). A frontend can be written in any programming language and may run locally, in a browser, or as part of another service, such as a [Bot](#bot). Also known as [Client](#frontend) or [UI](#frontend).
 
 ### Bot
-A `Bot` is an [AI Horde](#ai-horde) [integration](#integration) hosted on a third-party server, facilitating interactions between another service and the AI Horde. For example, a Discord bot connects Discord with the AI Horde, while a Reddit bot connects Reddit with it. 
+A `Bot` is an [AI Horde](#ai-horde) [integration](#integration) hosted on a third-party server, facilitating interactions between another service and the AI Horde. For example, a Discord bot connects Discord with the AI Horde, while a Reddit bot connects Reddit with it.
 
 ### Proxy
 A `Proxy` is a service that sits between the [Frontend](#frontend) and an [AI Horde](#ai-horde). This means that AI Horde request logic is handled by the proxy servers instead of the [user](#user)'s computer. For example, in a Discord [Bot](#bot), Discord itself (and the `/slash` command therein) is the [Frontend](#frontend) and the bot servers are the proxy. Proxies can read your request details and even store your [API key](#api-key) for re-use later. As such, it's important not to use proxy services you do not trust!
@@ -138,7 +138,7 @@ A `Bridge` is a software component that handles the communication between the in
 ### Dreamer
 An [AI Horde](#ai-horde) [Bridge](#bridge) providing [text2img](#text2img), [img2img](#img2img), and [inpainting](#inpainting) capabilities. Dreamers generate [kudos](#kudos) per image generation with the baseline being 10 kudos for an image of 512x512 pixels at 50 steps. Dreamers also receive uptime kudos every 10 minutes, with the number increasing with the number of [models](#model) they serve at the same time.
 
-### Scribe 
+### Scribe
 An [AI Horde](#ai-horde) [Bridge](#bridge) providing [LLM](#llm) Generation capabilities. Scribes generate [kudos](#kudos) per text generation with the baseline being 10 kudos for 80 [tokens](tokens) in a 2.7b model. The kudos generated scale with the number of parameters in the model size. Scribes also receive uptime kudos every 10 minutes, with the number increasing with the parameters in their model.
 
 ### Alchemist
@@ -243,5 +243,3 @@ A user set as flagged will be treated always as [suspicious](#suspicious) and al
 
 ### FOSS
 Stands for [Free and Open Source Software](https://en.wikipedia.org/wiki/Free_and_open-source_software).
-
-

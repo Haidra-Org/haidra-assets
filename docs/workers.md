@@ -11,7 +11,7 @@ The [AI Horde](definitions.md#ai-horde) system follows a specific lifecycle for 
 ## 2. Server Validation and Processing
 
 - The server validates the incoming request.
-- The user's kudos balance is checked. 
+- The user's kudos balance is checked.
    - If the request *requires* kudos, the user's current kudos balance is checked that it can cover the generation's cost.
    - If the request does not require kudos (an anonymous user could otherwise request it), the kudos are still subtracted in exchange for priority. If the user does not have enough kudos and the user is a registered user, they are treated as having 25 kudos and cannot go below that amount.
       - See [kudos](kudos.md) for more information.
@@ -91,4 +91,3 @@ The AI Horde supports various types of workers:
    - The full list of supported models is available in the official [AI Horde text model reference](definitions.md#text-model-reference).
 
 Each worker type specializes in specific tasks within the AI Horde ecosystem, contributing to the overall functionality and versatility of the service. Workers earn [kudos](kudos.md) for their contributions, which helps maintain a fair and efficient system for resource allocation.
-
