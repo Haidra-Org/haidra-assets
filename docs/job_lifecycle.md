@@ -13,7 +13,7 @@ graph TD
     C -->|Insufficient Kudos| F
     D --> G[Break into Jobs]
     G --> H[Add Jobs to Queue]
-    
+
     H --> I[Worker Pops Jobs]
     I --> J{Job Available}
     J -->|Yes| K[Process Job]
@@ -27,7 +27,7 @@ graph TD
     K --> P[Submit Final Payload]
     P --> L
     P --> Q[Request Complete]
-    
+
     Q --> R[Update Request Status]
     O --> R
     R --> S[User Retrieves Results]
