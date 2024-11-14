@@ -3,7 +3,6 @@
 You can also download the [job_lifecycle.mermaid file here](job_lifecycle.mermaid).
 
 ``` mermaid
-
 graph TD
     A[User Submits Request] --> B{Server Validates Request}
     B -->|Valid| C{Kudos Check}

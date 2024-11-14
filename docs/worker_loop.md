@@ -3,7 +3,6 @@
 You can also download the [worker_loop.mermaid file here](worker_loop.mermaid).
 
 ```mermaid
-
 graph TD
     A[Worker Startup] --> B{Maintenance Mode}
     B -->|Yes| C[Maintenance]
