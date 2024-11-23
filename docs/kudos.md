@@ -25,7 +25,9 @@ This means that **kudos are the fundamental unit of exchange of resources on the
   
 ## Priority System
 
-The kudos-based priority system ensures fair access to the AI Horde's resources. When a user submits a request, their position in the job queue is determined by the number of kudos in their account. Users with more kudos will have their jobs processed sooner, while those with fewer kudos may experience longer waiting times. Requests from anonymous users and registered users with no kudos are fulfilled on a first-come, first-serve basis. If there are not enough resources to fulfill a request within a certain time limit, the request will time out and you will have to try again. In practice, however, most of the fulfilled requests on the public AI-Horde are from anonymous users, so if you see your request timeout, try again, possibly with a different model or easier-to-fulfill parameters.
+The kudos-based priority system ensures fair access to the AI Horde's resources. When a user submits a request, their position in the job queue is determined by the number of kudos in their account. Users with more kudos will have their jobs processed sooner, while those with fewer kudos may experience longer waiting times. 
+
+Requests from anonymous users and registered users with no kudos are fulfilled on a first-come, first-serve basis. If there are not enough resources to fulfill a request within a certain time limit, the request will time out and you will have to try again. In practice, however, most of the fulfilled requests on the public AI-Horde are from anonymous users, so if you see your request timeout, try again, possibly with a different model or easier-to-fulfill parameters.
 
 By striking a balance between rewarding contributors and ensuring fair access for all users, the kudos-based priority system maintains the integrity and equity of the AI Horde ecosystem.
 
