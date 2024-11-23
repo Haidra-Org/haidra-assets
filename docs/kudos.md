@@ -25,10 +25,7 @@ This means that **kudos are the fundamental unit of exchange of resources on the
 
 The kudos-based priority system ensures fair access to the AI Horde's resources. When a user submits a request, their position in the job queue is determined by the number of kudos in their account. Users with more kudos will have their jobs processed sooner, while those with fewer kudos may experience longer waiting times.
 
-However, the AI Horde has measures in place to prevent kudos hoarding and ensure that users with large amounts of kudos do not dominate the platform. These measures include:
-
-- Limiting the maximum number of kudos a user can accumulate
-- Monitoring and flagging suspicious activity, such as the use of multiple accounts to circumvent kudos limits
+However, the AI Horde has measures in place to prevent kudos hoarding and ensure that users with large amounts of kudos do not dominate the platform. These measures include monitoring and flagging suspicious activity.
 
 By striking a balance between rewarding contributors and ensuring fair access for all users, the kudos-based priority system maintains the integrity and equity of the AI Horde ecosystem.
 
