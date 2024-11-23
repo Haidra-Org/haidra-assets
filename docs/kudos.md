@@ -20,7 +20,9 @@ This means that **kudos are the fundamental unit of exchange of resources on the
 - **The total number of kudos in your account determines your starting place in line when queuing a job.**
   - The more kudos you have in your account, the higher priority your job will have in the queue. Anonymous users start with 0 kudos, while registered users have at least 25, giving them an advantage when queuing jobs.
   - If two users have the same kudos and they were to submit a job at the same time, they can expect that both jobs would return in about the same amount of time.
-
+- **Unspent kudos are a donation to the community**
+  - Workers who choose to not spend their kudos are effectively donating their resources to the project.
+  
 ## Priority System
 
 The kudos-based priority system ensures fair access to the AI Horde's resources. When a user submits a request, their position in the job queue is determined by the number of kudos in their account. Users with more kudos will have their jobs processed sooner, while those with fewer kudos may experience longer waiting times. Requests from anonymous users and registered users with no kudos are fulfilled on a first-come, first-serve basis. If there are not enough resources to fulfill a request within a certain time limit, the request will time out and you will have to try again. In practice, however, most of the fulfilled requests on the public AI-Horde are from anonymous users, so if you see your request timeout, try again, possibly with a different model or easier-to-fulfill parameters.
