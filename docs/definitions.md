@@ -114,8 +114,6 @@ A situation where an [AI Horde](#ai-horde) is being attacked by [malicious actor
 
 ## Infrastructure
 
-### Infrastructure
-
 The infrastructure consists of the servers and software stack that power the AI Horde. The system relies on the following components: Linux, Python 3, HAProxy, PostgreSQL, Redis, and Cloudflare R2.
 
 ### R2

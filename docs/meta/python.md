@@ -53,8 +53,8 @@ These principles are opinionated and exist for consistency and maintainability. 
             for item in some_items:
                 process_item(item)
 
-            
-            for item in special_items:  
+
+            for item in special_items:
                 # item type is different here, causing confusion, breaks static analysis
                 process_item(item)
 
@@ -70,7 +70,7 @@ These principles are opinionated and exist for consistency and maintainability. 
     ```
 
 - **Names must be descriptive**. While ambiguity cannot always be avoided, strive for clarity.
-    - Avoid vague names like `data`, `info`, `item`, `value`, `name` when a more specific name is possible.  
+    - Avoid vague names like `data`, `info`, `item`, `value`, `name` when a more specific name is possible.
         - Context is important. Small functions or loops do not always need extremely descriptive names.
     - One/two/three letter variable names only allowed for:
         - Very small scope (e.g., `i` for a loop)
@@ -147,7 +147,7 @@ These principles are opinionated and exist for consistency and maintainability. 
     - Use the `Raises:` section to document any exceptions that may be raised.
         - Document likely exceptions (`FileNotFoundError`, `IOError` for file operations; `ConnectionError`, `TimeoutError` for network calls).
         - Note: This does not mean you need to document every possible exception that could be raised, only those that are part of the method's contract, are likely to be encountered by users of the method, or foreseeable by the method's implementation.
-  
+
 ### mkdocs enabled projects
 
 - Class docstrings should use the following additional headers as appropriate (these are not required for every class, only when relevant):
@@ -287,7 +287,7 @@ These principles are opinionated and exist for consistency and maintainability. 
     def can_process_request(request: Request, worker: Worker) -> bool:
         model_compatible = request.model in worker.models and request.size <= worker.max_size
         can_accept = model_compatible or request.is_priority
-        
+
         return can_accept and worker.available and request.safe
 
     # Even Better - extract validation logic into focused, reusable methods
@@ -316,11 +316,11 @@ These principles are opinionated and exist for consistency and maintainability. 
 - Use properties for read-only access; avoid exposing mutable members (return copies instead).
 - Magic strings/numbers are evil. Use `StrEnum`/`Enum` for specific valid values, constants for isolated values. Members should be capitalized.
     - Use `StrEnum` when string representation is needed (e.g., JSON serialization, external APIs):
-  
+
    ```python
          from enum import auto()
          from strenum import StrEnum
-    
+
          class Color(StrEnum):
               RED = auto()
               GREEN = auto()
@@ -337,7 +337,7 @@ These principles are opinionated and exist for consistency and maintainability. 
     ```
 
 - If your settings are user-configurable, use `pydantic-settings`'s `BaseSettings` for environment variable support:
-  
+
     ```python
         from pydantic import BaseModel
         from pydantic_settings import BaseSettings

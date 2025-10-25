@@ -26,14 +26,14 @@ See also the [job lifecycle diagram](job_lifecycle.md) and [worker loop diagram]
 
 - [Workers](definitions.md#worker) continuously poll for jobs when their local queue has room. However, they are not required to have jobs queued or their queue full. Workers never listen on a port for jobs - they always reach out to the API for work.
 - Certain worker types analyze the latest popped job and pause popping new jobs until the already queued jobs make some progress.
-  - Consider the following scenario:
-    - A worker pops a job ('Job L') expected to take 3 minutes.
-    - The worker immediately pops another job ('Job S') expected to take 20 seconds.
-    - 'Job L' will need to finish before 'Job S' can begin.
-    - The end user, expecting a quick response, would instead see it take over 3 minutes to get a response. If the worker had popped more conservatively, another worker could have handled 'Job S' more quickly, providing a faster response to the user.
-    - By pausing job pops until 'Job L' has made significant progress, the worker can help reduce wait times for end users.
-  - However, it is important to note that workers typically require between 3 and 20 seconds per job to preload assets into memory.
-  - Therefore, it is prudent for workers to have some overlap between jobs, aiming to pop a new job with around 30 seconds left on long-running jobs, and aiming to pop another instantly when the already queued jobs are expected to be brief.
+    - Consider the following scenario:
+        - A worker pops a job ('Job L') expected to take 3 minutes.
+        - The worker immediately pops another job ('Job S') expected to take 20 seconds.
+        - 'Job L' will need to finish before 'Job S' can begin.
+        - The end user, expecting a quick response, would instead see it take over 3 minutes to get a response. If the worker had popped more conservatively, another worker could have handled 'Job S' more quickly, providing a faster response to the user.
+        - By pausing job pops until 'Job L' has made significant progress, the worker can help reduce wait times for end users.
+    - However, it is important to note that workers typically require between 3 and 20 seconds per job to preload assets into memory.
+    - Therefore, it is prudent for workers to have some overlap between jobs, aiming to pop a new job with around 30 seconds left on long-running jobs, and aiming to pop another instantly when the already queued jobs are expected to be brief.
 
 ### Job assignment process
 
@@ -49,8 +49,8 @@ See also the [job lifecycle diagram](job_lifecycle.md) and [worker loop diagram]
 - The worker processes the job according to the specified parameters.
 - [Post-processing](definitions.md#post-processing) is performed if applicable (e.g., upscaling for images).
 - For [image generation](definitions.md#text2img), safety checks are conducted:
-  - NSFW content is filtered if requested by the user.
-  - Checks for illegal content are always performed.
+    - NSFW content is filtered if requested by the user.
+    - Checks for illegal content are always performed.
 
 ## 5. Result Submission
 
@@ -68,13 +68,13 @@ See also the [job lifecycle diagram](job_lifecycle.md) and [worker loop diagram]
 
 - Once all jobs for a request are completed, the user can retrieve the results.
 - The retrieval process differs based on the request type:
-  - [Text Requests](definitions.md#text2text):
-    - Users poll the relevant 'status' endpoint to check progress and receive the final generation data.
-  - [Image Requests](definitions.md#image-generation):
-    - Users first poll the relevant 'check' endpoint to monitor progress.
-      - This endpoint has less restrictive rate limits but doesn't return the final image data.
-      - It indicates completion with a `done: true` field.
-    - Once complete or partially complete, users can use the 'status' endpoint to retrieve the generated images.
+    - [Text Requests](definitions.md#text2text):
+        - Users poll the relevant 'status' endpoint to check progress and receive the final generation data.
+    - [Image Requests](definitions.md#image-generation):
+        - Users first poll the relevant 'check' endpoint to monitor progress.
+            - This endpoint has less restrictive rate limits but doesn't return the final image data.
+            - It indicates completion with a `done: true` field.
+        - Once complete or partially complete, users can use the 'status' endpoint to retrieve the generated images.
 
 ## 7. Kudos Distribution
 
