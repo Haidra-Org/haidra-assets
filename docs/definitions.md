@@ -174,7 +174,7 @@ An [AI Horde](#ai-horde) [Bridge](#bridge) providing [text2img](#text2img), [img
 
 ### Scribe
 
-An [AI Horde](#ai-horde) [Bridge](#bridge) providing [LLM](#llm) Generation capabilities. Scribes generate [kudos](#kudos) per text generation with the baseline being 10 kudos for 80 [tokens](tokens) in a 2.7b model. The kudos generated scale with the number of parameters in the model size. Scribes also receive uptime kudos every 10 minutes, with the number increasing with the parameters in their model.
+An [AI Horde](#ai-horde) [Bridge](#bridge) providing [LLM](#llm) Generation capabilities. Scribes generate [kudos](#kudos) per text generation with the baseline being 10 kudos for 80 [tokens](#token) in a 2.7b model. The kudos generated scale with the number of parameters in the model size. Scribes also receive uptime kudos every 10 minutes, with the number increasing with the parameters in their model.
 
 ### Alchemist
 
