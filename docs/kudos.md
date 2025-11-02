@@ -22,6 +22,11 @@ This means that **kudos are the fundamental unit of exchange of resources on the
     - If two users have the same kudos and they were to submit a job at the same time, they can expect that both jobs would return in about the same amount of time.
 - **Unspent kudos are a donation to the community**
     - Workers who choose to not spend their kudos are effectively donating their resources to the project.
+- **Kudos can be earned by running [a worker](https://github.com/Haidra-Org/horde-worker-reGen) and contributing to the Horde.**
+    - You get kudos simply by being online ([uptime kudos](definitions.md#uptime-kudos)) and available as a worker, in addition to earning kudos for successfully completed jobs.
+        - Note: New users have their kudos earned for [uptime](definitions.md#uptime-kudos) held in escrow until they become [trusted](definitions.md#trusted), which happens automatically after a certain amount of uptime and jobs successfully submitted. At that point they receive the escrowed kudos and full rewards immediately going forward.
+- **You do not need a powerful GPU to earn Kudos.**
+    - Besides gifts and image workers, you can participate in Discord Bounties, rate images, or run text generators and interrogators (for less potent GPUs) to earn Kudos.
 
 ## Priority System
 

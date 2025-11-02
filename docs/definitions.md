@@ -20,9 +20,18 @@ See also [horde-sdk](#horde-sdk) for the official Python SDK for interacting wit
 
 `Kudos` is the priority system that determines which [user](#user)'s request is processed first. [Workers](#worker) earn kudos when they complete a [job](#job), and users spend kudos to make requests. Kudos can be traded but not sold. Users cannot go below a certain minimum, and they can still submit requests even when they have reached their minimum balance.
 
+> For details on kudos earned for availability, see [Uptime Kudos](#uptime-kudos).
+
 ### Request
 
 The [payload](#payload) sent by the [user](#user) via their chosen [integration](#integration). A request can be for one or more [jobs](#job). Each request receives a unique ID (UUID) for the user who requested it to track its status.
+
+### Uptime Kudos
+
+**Uptime Kudos** are awarded to [workers](#worker) for being online and available, regardless of whether they are actively processing jobs. Every 10 minutes, a nominal amount of kudos is granted, with the amount increasing based on the number of models (for [Dreamers](#dreamer)) or model parameters (for [Scribes](#scribe)) served. This system encourages reliability and a steady pool of available workers.
+
+- **New users** have their uptime kudos held in escrow until they become [trusted](#trusted), at which point all escrowed kudos are released and full rewards are granted immediately going forward.
+- Uptime kudos are separate from those earned for completing jobs and help maintain a healthy, available infrastructure for all users.
 
 ### Job
 
@@ -86,7 +95,7 @@ A classification for a worker or user which specifies extra restrictions.
 
 ### Trusted
 
-A [user](#user) who has run a [worker](#worker) for at least one week and generated a significant amount of [kudos](#kudos) through inference. Trusted users get the ability to run a worker behind a VPN, and they cannot get [suspicion](#suspicious) anymore. They also get a special role in the official Discord server.
+A [user](#user) who has run a [worker](#worker) for at least one week and generated a significant amount of [kudos](#kudos) through inference. Trusted users receive all of their [uptime kudos](definitions.md#uptime-kudos) held in escrow (and the full amount immediately moving forward), get the ability to run a worker behind a VPN, and they cannot get [suspicion](#suspicious) anymore. They also get a special role in the official Discord server.
 
 ### Suspicious
 
