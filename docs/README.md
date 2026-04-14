@@ -16,7 +16,7 @@ Provides an overview of the AI-Horde, explaining its purpose, how it works, and 
 
 Contains a detailed glossary of terms used within the AI-Horde ecosystem. It explains core concepts, user roles, infrastructure components, and various technical terms related to AI-Horde operations.
 
-### [job\_lifecycle.md](job_lifecycle.md)
+### [job_lifecycle.md](job_lifecycle.md)
 
 Describes the lifecycle of a job within the AI-Horde system. It includes a mermaid diagram illustrating the flow from user request submission to job completion and result retrieval.
 
@@ -24,7 +24,7 @@ Describes the lifecycle of a job within the AI-Horde system. It includes a merma
 
 Explains the role of workers in the AI-Horde system, detailing the process of job assignment, execution, and result submission. It also covers different types of workers and the technologies they use.
 
-### [worker\_loop.md](worker_loop.md)
+### [worker_loop.md](worker_loop.md)
 
 Provides a detailed description of the worker loop, including a mermaid diagram. It outlines the steps a worker goes through from startup, job polling, processing, and handling post-processing tasks.
 

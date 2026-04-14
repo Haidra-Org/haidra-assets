@@ -67,7 +67,7 @@ A protocol allowing an [AI Horde](#ai-horde) to identify a [user](#user) using a
 
 > **Important**: Pseudonymous accounts cannot be recovered if the user misplaces their [API key](#api-key). If you lose your API key with a pseudonymous account **it will be lost forever**.
 >
-An account registered without logging in with the [oauth2](#oauth2) services.
+> An account registered without logging in with the [oauth2](#oauth2) services.
 
 ### Anonymous
 
