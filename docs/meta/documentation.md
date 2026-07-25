@@ -5,7 +5,8 @@ documents written for contributors and operators, not to docstrings, which are c
 
 In brief:
 
-- Organize `docs/` by [Diátaxis](https://diataxis.fr/) class, with `docs/README.md` as the index.
+- Organize `docs/` by [Diátaxis](https://diataxis.fr/) class, each class carrying its own index.
+- Declare a document's title, summary, status, and topics in front matter, and generate the indexes from it.
 - Open every document with a summary that survives truncation.
 - Order headings from overview to detail so a reader can stop at any depth.
 - Give reference documents a code map from concept to file and symbol.
@@ -21,10 +22,42 @@ set. Change proposals are welcome where a rule is overly restrictive, missing, o
 ## Organization
 
 Documents are filed by Diátaxis class: `explanation/`, `reference/`, `how-to/`, and `tutorial/`, using only the classes
-a repository actually needs. `docs/README.md` indexes the tree and says what each document holds.
+a repository actually needs. A class directory is created when its first document is written, never in advance.
+
+Indexing is two-level. Each class carries a `README.md` that says what the class is for, lists its documents, and holds
+any conventions specific to that class. `docs/README.md` routes between the classes and does not list individual
+documents, so the landing page stays a constant size as the tree grows.
 
 Diátaxis settles where a document is filed and what mode it is written in. The rules below govern quality, and they
 apply within every class.
+
+## Front matter and generated indexes
+
+Every curated document declares its own metadata, and every index that lists documents is generated from those
+declarations. An index maintained by hand disagrees with the tree it indexes, and the disagreement is invisible until a
+reader is already lost.
+
+```yaml
+---
+title: Job matching and pop # equals the document's level-one heading
+summary: One line, at most 200 characters, shown wherever this document is listed.
+status: authored # authored | stub
+topics: [requests, workers] # each defined in the topics page
+order: 30 # optional; sequences the document within its class
+---
+```
+
+- `summary` is what an index shows. It states what the document holds, not that the document exists.
+- `status` is `authored` or `stub`. A stub is published rather than withheld: it scopes what the document will cover,
+  names the code that holds the behavior until then, and is marked as planned in its class index. A stub says what is
+  planned; it never says when.
+- `topics` are subject tags shared across classes. A topics page defines each tag and collects the documents carrying
+  it, which is how a reader holding a subject reaches the explanation, the reference, and the procedure together. A tag
+  must be defined before it is used, and a defined tag no document uses is removed. Without that rule the tag set
+  splinters into near-duplicates and stops being a navigation surface.
+
+Where a repository publishes a site, navigation order and display titles stay curated; navigation membership does not.
+Membership is checked against the tree so a document cannot be added without appearing, or removed while still listed.
 
 ## Opening summary
 
@@ -93,7 +126,9 @@ A documentation change lands in the same pull request as the behavior change it 
 the code it documents is treated as a defect in that pull request.
 
 A repository publishing its docs runs the gates in CI: the site builds in strict mode, every generated index verifies
-clean against its records (`--check`), license compliance passes, and internal links resolve. A generated file that can
+clean against its inputs (`--check`), front matter is valid and agrees with the document body, site navigation matches
+the tree, cited code paths exist, prose style rules that can be checked mechanically are checked, license compliance
+passes, and internal links resolve. Tooling that gates the documentation is itself tested. A generated file that can
 drift from its inputs without failing CI will.
 
 ## Architecture Decision Records
@@ -124,8 +159,9 @@ and links its replacement. A decision changed in part stays `accepted` and links
 two ways as well.
 
 The directory stays flat and numbers are global: never reused, never renumbered, never sharded into subdirectories.
-Topical organization belongs to the index. While a repository holds few records, `docs/README.md` lists them; past
-that, `docs/decisions/README.md` indexes them, grouped by system and showing status.
+Topical organization belongs to the index. The records are indexed by a generated `docs/decisions/index.md` carrying
+each record's status and date, and that page is how the corpus enters navigation: records are never listed
+individually, so navigation does not grow with the record count.
 
 An accepted record is immutable in substance. Permissible edits are typo fixes and repairing file or symbol references
 that the codebase has moved out from under the record. Context, Decision Outcome, and Consequences are never rewritten
