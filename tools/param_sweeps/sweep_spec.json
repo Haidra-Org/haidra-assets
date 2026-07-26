@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "seed": 1234567890,
+  "anchor": {
+    "sampler_name": "k_euler_a",
+    "cfg_scale": 7.5,
+    "steps": 30,
+    "karras": true,
+    "denoising_strength": 1.0,
+    "hires_fix": false,
+    "tiling": false
+  },
+  "models": [
+    {
+      "slug": "deliberate",
+      "horde_name": "Deliberate",
+      "baseline": "stable_diffusion_1",
+      "native_width": 512,
+      "native_height": 512,
+      "anchor_clip_skip": 1,
+      "approximate_download_size_gb": 2.0,
+      "note": "A general-purpose SD1.5 model. Trained at 512 and expects the full text encoder."
+    },
+    {
+      "slug": "albedobase-xl",
+      "horde_name": "AlbedoBase XL (SDXL)",
+      "baseline": "stable_diffusion_xl",
+      "native_width": 1024,
+      "native_height": 1024,
+      "anchor_clip_skip": 1,
+      "approximate_download_size_gb": 6.5,
+      "note": "An SDXL model. Trained at 1024 and falls apart when asked for much less."
+    },
+    {
+      "slug": "anything-diffusion",
+      "horde_name": "Anything Diffusion",
+      "baseline": "stable_diffusion_1",
+      "native_width": 512,
+      "native_height": 512,
+      "anchor_clip_skip": 2,
+      "approximate_download_size_gb": 2.0,
+      "note": "An anime model in the NovelAI lineage, trained so that skipping the last text-encoder layer is the intended setting."
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "person",
+      "label": "A person",
+      "prompt": "a lighthouse keeper standing on a cliffside path at golden hour, facing the viewer, weathered kindly face, coastal village below, dramatic sky, sweeping ocean view, cinematic lighting, highly detailed",
+      "derived_from": "AiHordeFrontpage src/assets/tutorials/txt2img/request.json, verbatim"
+    },
+    {
+      "scene_id": "place",
+      "label": "A place",
+      "prompt": "a cliffside path winding down to a coastal village at golden hour, whitewashed cottages, harbour wall and moored fishing boats, dramatic sky, sweeping ocean view, cinematic lighting, highly detailed",
+      "derived_from": "The txt2img tutorial prompt with the keeper removed, so the same world is shown without a face to judge"
+    },
+    {
+      "scene_id": "thing",
+      "label": "A thing",
+      "prompt": "a lighthouse keeper's brass lantern on a weathered wooden table, salt-stained glass, coiled rope and a folded chart beside it, golden hour light through a window, cinematic lighting, highly detailed",
+      "derived_from": "The txt2img tutorial prompt reduced to one object, so texture-led parameters have something small to act on"
+    }
+  ],
+  "sweeps": [
+    {
+      "kind": "strip",
+      "parameter": "steps",
+      "rationale": "SD1.5 and SDXL settle at different step counts, so both baselines are shown; the anime model behaves like SD1.5 here and would only repeat it.",
+      "caption": "How many denoising steps the sampler takes. More steps cost more time, and stop helping well before they stop costing.",
+      "model_slugs": ["deliberate", "albedobase-xl"],
+      "scene_ids": ["person", "place"],
+      "presentation": "strip",
+      "stops": [
+        { "value": 4, "steps": 4, "caption": "Too few steps to resolve the scene: shapes are blocky and colour smears." },
+        { "value": 8, "steps": 8, "caption": "The composition arrives, but edges and faces are still soft." },
+        { "value": 12, "steps": 12, "caption": "Detail starts to settle and small features become readable." },
+        { "value": 20, "steps": 20, "caption": "Close to this model's best for the scene; most of what you will get is here." },
+        { "value": 30, "steps": 30, "caption": "The common default. Extra steps now mostly refine texture." },
+        { "value": 50, "steps": 50, "caption": "Little you can see over 30, for well over twice the time and kudos." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "cfg_scale",
+      "rationale": "SDXL burns out at a lower guidance than SD1.5, so the two baselines diverge; the anime model tracks SD1.5 closely enough that a third strip teaches nothing new.",
+      "caption": "How hard the model is pushed to follow your prompt. Too low and it ignores you; too high and it overcooks the image.",
+      "model_slugs": ["deliberate", "albedobase-xl"],
+      "scene_ids": ["person", "place"],
+      "presentation": "strip",
+      "stops": [
+        { "value": 1, "cfg_scale": 1.0, "caption": "The model barely listens to your prompt: washed out and generic." },
+        { "value": 3, "cfg_scale": 3.0, "caption": "Loose adherence and soft colour, with room for the model's own ideas." },
+        { "value": 5, "cfg_scale": 5.0, "caption": "A gentle balance, good when your prompt is already detailed." },
+        { "value": 7, "cfg_scale": 7.0, "caption": "The usual home base for most models." },
+        { "value": 11, "cfg_scale": 11.0, "caption": "Firmer adherence, with contrast and saturation starting to climb." },
+        { "value": 15, "cfg_scale": 15.0, "caption": "Overcooked: harsh contrast, burnt colour and crunchy edges." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "sampler",
+      "rationale": "Ancestral and converging samplers separate differently on each baseline, so one photoreal SD1.5 model and one SDXL model cover the contrast at fixed steps.",
+      "caption": "Which algorithm walks the image out of noise. At the same steps and seed, each one lands somewhere slightly different.",
+      "model_slugs": ["deliberate", "albedobase-xl"],
+      "scene_ids": ["person"],
+      "presentation": "strip",
+      "stops": [
+        { "value": "k_euler", "sampler_name": "k_euler", "steps": 20, "caption": "Fast and predictable, and a good baseline to compare the others against." },
+        { "value": "k_euler_a", "sampler_name": "k_euler_a", "steps": 20, "caption": "Ancestral: it adds fresh noise each step, so the image keeps changing as you add steps." },
+        { "value": "k_dpmpp_2m", "sampler_name": "k_dpmpp_2m", "steps": 20, "caption": "Converges quickly and is often the cleanest result at 20 to 30 steps." },
+        { "value": "k_dpmpp_sde", "sampler_name": "k_dpmpp_sde", "steps": 20, "caption": "Stochastic, so it lands somewhere of its own, often with richer texture." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "clip_skip",
+      "rationale": "All three models, because the comparison is the lesson: 2 is right for the anime-lineage model and wrong for the other two.",
+      "caption": "How many layers to cut from the end of the text encoder. Anime-lineage models were trained expecting one to be cut.",
+      "model_slugs": ["deliberate", "albedobase-xl", "anything-diffusion"],
+      "scene_ids": ["person"],
+      "presentation": "strip",
+      "stops": [
+        { "value": 1, "clip_skip": 1, "caption": "The full text encoder. What most non-anime models expect." },
+        { "value": 2, "clip_skip": 2, "caption": "Skips the last layer. On an anime-lineage model this is the intended setting; elsewhere it just loosens the prompt." },
+        { "value": 3, "clip_skip": 3, "caption": "Skipping further loses prompt detail, and your wording starts to be ignored." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "hires_fix",
+      "rationale": "The failure hires-fix repairs only appears above a model's native size, so the strip must render above it; at native size the flag does nothing at all. SD1.5 shows it at 2x native (1024), where the doubling artifacts are unmistakable.",
+      "caption": "Above a model's native size, one pass repeats what it knows. Hires-fix generates small first, then enlarges and refines.",
+      "model_slugs": ["deliberate"],
+      "scene_ids": ["thing"],
+      "presentation": "strip",
+      "resolution_multiplier": 2.0,
+      "stops": [
+        { "value": false, "hires_fix": false, "caption": "One pass at the full size. Above what the model knows you get duplicated details and stretched shapes." },
+        { "value": true, "hires_fix": true, "caption": "Generated small, then enlarged and re-diffused, so the composition stays coherent." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "hires_fix",
+      "rationale": "SDXL degrades more gently past native, so 1.5x (1536) is enough to show the repair without an extreme render.",
+      "caption": "Above a model's native size, one pass repeats what it knows. Hires-fix generates small first, then enlarges and refines.",
+      "model_slugs": ["albedobase-xl"],
+      "scene_ids": ["thing"],
+      "presentation": "strip",
+      "resolution_multiplier": 1.5,
+      "stops": [
+        { "value": false, "hires_fix": false, "caption": "One pass at the full size. Above what the model knows you get duplicated details and stretched shapes." },
+        { "value": true, "hires_fix": true, "caption": "Generated small, then enlarged and re-diffused, so the composition stays coherent." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "tiling",
+      "rationale": "Seam behaviour is a sampler-level effect that reads the same on every baseline, so one model is enough; shown on the object scene, which is what anyone actually tiles.",
+      "caption": "Whether the edges are made to wrap. Shown repeated four times, because that is the only way you can see it.",
+      "model_slugs": ["deliberate"],
+      "scene_ids": ["thing"],
+      "presentation": "tile_repeat_2x2",
+      "stops": [
+        { "value": false, "tiling": false, "caption": "Edges end wherever they like, so repeating the image shows hard seams." },
+        { "value": true, "tiling": true, "caption": "Edges are made to wrap, so the image repeats seamlessly as a texture." }
+      ]
+    },
+    {
+      "kind": "strip",
+      "parameter": "resolution",
+      "rationale": "SDXL only, because the degradation being taught is SDXL-specific: it is what happens when you ask an SDXL model for the sizes an SD1.5 model was built for.",
+      "caption": "Every model has a size it was trained at. Ask an SDXL model for much less and it does not simply get smaller, it gets worse.",
+      "model_slugs": ["albedobase-xl"],
+      "scene_ids": ["person"],
+      "presentation": "strip",
+      "stops": [
+        { "value": "128x128", "width": 128, "height": 128, "caption": "Far below anything SDXL saw in training: the image collapses into mush." },
+        { "value": "256x256", "width": 256, "height": 256, "caption": "Still far too small. Shapes appear, but nothing holds together." },
+        { "value": "512x512", "width": 512, "height": 512, "caption": "Native for SD1.5, and still wrong here: anatomy and framing come out muddled." },
+        { "value": "1024x1024", "width": 1024, "height": 1024, "caption": "SDXL's native size. This is what the model was trained to make." }
+      ]
+    },
+    {
+      "kind": "grid",
+      "parameter": "steps_cfg_grid",
+      "rationale": "One grid per baseline, because steps and guidance interact differently for SD1.5, for SDXL, and for the anime lineage.",
+      "caption": "Steps and guidance are not independent. Read across for guidance and down for steps: both have to be in range before an image looks right.",
+      "model_slugs": ["deliberate", "albedobase-xl", "anything-diffusion"],
+      "scene_ids": ["person"],
+      "steps_values": [4, 8, 12, 20, 30, 50],
+      "cfg_values": [1, 3, 5, 7, 11, 15],
+      "row_caption": "Steps, top to bottom.",
+      "column_caption": "Guidance, left to right."
+    }
+  ]
+}

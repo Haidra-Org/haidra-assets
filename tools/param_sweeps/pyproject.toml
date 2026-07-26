@@ -1,0 +1,74 @@
+[project]
+name = "haidra-param-sweeps"
+version = "1.0.0"
+description = "Render the AI Horde parameter-sweep illustration library from a declarative specification."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "AGPL-3.0-or-later" }
+dependencies = [
+    "pillow>=10.0",
+    "pydantic>=2.7",
+    "requests>=2.31",
+    "strenum>=0.4.15",
+]
+
+[project.optional-dependencies]
+# horde-engine pulls in torch. Install the right torch build for your GPU BEFORE this extra;
+# see README.md.
+local = ["horde-engine>=6.4.1"]
+
+[project.scripts]
+param-sweeps = "param_sweeps.cli:main"
+
+[dependency-groups]
+dev = [
+    "black>=24.4",
+    "mypy>=1.10",
+    "pytest>=8.2",
+    "ruff>=0.5",
+    "types-requests>=2.31",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["param_sweeps"]
+
+[tool.black]
+line-length = 119
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 119
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["A", "ANN", "B", "C4", "D", "E", "F", "I", "N", "RET", "RUF", "SIM", "UP", "W"]
+ignore = [
+    "D203",   # incompatible with D211, which is the convention used here
+    "D213",   # incompatible with D212, which is the convention used here
+    "ANN401", # a backend whose types this tool does not own is reached through Any
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D103", "D100"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+disallow_untyped_defs = true
+warn_unreachable = true
+files = ["param_sweeps", "tests"]
+
+[[tool.mypy.overrides]]
+# horde-engine ships no stubs this tool can rely on, and is an optional dependency besides.
+module = ["hordelib.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

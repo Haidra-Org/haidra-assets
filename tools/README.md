@@ -1,7 +1,8 @@
 # Tools
 
-Shared documentation tooling for Haidra repositories. Everything here is standard-library Python and safe to
-run from a submodule checkout.
+Shared tooling for Haidra repositories, safe to run from a submodule checkout. The documentation tools are
+standard-library Python and need no installation. The one exception is `param_sweeps/`, which renders images
+and is installed as its own package with its own dependencies.
 
 ## gen_adr_index.py
 
@@ -92,3 +93,26 @@ python docs/haidra-assets/tools/check_code_refs.py docs/README.md docs/explanati
 
 Run it from the repository root, or pass `--repo-root`. Each stale citation is reported as `file:line: cited
 path does not exist`.
+
+## param_sweeps/
+
+Renders the parameter-sweep illustration library the Learn surfaces teach from: for each generation parameter,
+a strip of images that differ in that parameter and nothing else, each stop carrying a plain-language caption.
+One checked-in specification describes the library, and two runners render it, one on a local GPU through
+`horde-engine` and one through the public AI Horde API.
+
+```sh
+cd docs/haidra-assets/tools/param_sweeps
+uv sync --group dev
+
+# What would be downloaded, and how many images, generating nothing
+uv run param-sweeps plan
+
+# Regenerate one strip
+uv run param-sweeps horde --parameter clip_skip --model anything-diffusion --scene person
+```
+
+Unlike the tools above, this one has dependencies and its own `pyproject.toml`. Output lands in
+`assets/param-sweeps/`, with an `index.json` a web app can render every strip from on its own. See
+[param_sweeps/README.md](param_sweeps/README.md) for the runbook, including the GPU-backend note that has to be
+settled before `horde-engine` is installed.
