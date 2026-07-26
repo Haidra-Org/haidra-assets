@@ -24,12 +24,15 @@ set. Change proposals are welcome where a rule is overly restrictive, missing, o
 Documents are filed by Diátaxis class: `explanation/`, `reference/`, `how-to/`, and `tutorial/`, using only the classes
 a repository actually needs. A class directory is created when its first document is written, never in advance.
 
-Indexing is two-level. Each class carries a `README.md` that says what the class is for, lists its documents, and holds
-any conventions specific to that class. `docs/README.md` routes between the classes and does not list individual
-documents, so the landing page stays a constant size as the tree grows.
+Indexing is two-level. Each class carries a `README.md` that says in a line or two what a reader finds there and lists
+its documents. `docs/README.md` routes between the classes and does not list individual documents, so the landing page
+stays a constant size as the tree grows.
 
-Diátaxis settles where a document is filed and what mode it is written in. The rules below govern quality, and they
-apply within every class.
+Diátaxis settles where a document is filed and what mode it is written in. It is a tool for the people writing the
+tree, not a subject the tree teaches: a class index names its directory and gets on with it, and the authoring rules
+for each class live here rather than on the pages readers came to read.
+
+The rules below govern quality, and they apply within every class.
 
 ## Front matter and generated indexes
 
@@ -51,10 +54,12 @@ order: 30 # optional; sequences the document within its class
   generator that cannot parse front matter publishes it as page text. Front matter is validated against the parser
   that will consume it, never against a lenient reader.
 - `summary` is what an index shows. It states what the document holds, not that the document exists.
-- `status` marks a stub and is absent otherwise. A stub is published rather than withheld: it scopes what the document
-  will cover, names the code that holds the behavior until then, and is marked as planned in its class index. A stub
-  says what is planned; it never says when. The key is reserved by Material-derived themes, which mark the navigation
-  entry of every page carrying it, so marking only stubs is what makes the marker informative.
+- `status` marks a stub and is absent otherwise. A stub is published rather than withheld, and what it publishes is
+  about the subsystem, not about itself: a short factual description of the thing, the code that holds the behavior,
+  and links onward. It carries one banner line saying the detail is not written yet, and is marked as planned in its
+  class index. A stub says what is missing; it never says when it will arrive, and it never spends a paragraph
+  describing the document it is going to become. The key is reserved by Material-derived themes, which mark the
+  navigation entry of every page carrying it, so marking only stubs is what makes the marker informative.
 - `topics` are subject tags shared across classes. A topics page defines each tag and collects the documents carrying
   it, which is how a reader holding a subject reaches the explanation, the reference, and the procedure together. Each
   document also carries its own topics, generated, so a reader who arrives mid-tree can leave through the subject. A
@@ -94,6 +99,44 @@ intent; the code remains the authority on behavior.
 Where a document states a testable contract, it also names the test that covers it, so a reader can confirm the
 contract holds and a maintainer can see what breaks when it changes.
 
+Beyond the code map:
+
+- Cite code by module path and symbol, never by line number. Write `horde/classes/base/worker.py`, `Worker.check_in`.
+  Line numbers rot on the next edit; module and symbol names survive, and a checker can verify a path still exists.
+- Collect sharp edges rather than editorialising inline. Where current behavior carries a hazard (a cache with no
+  invalidation, a non-obvious ordering, an ORM freshness trap), describe the mechanism and its consequences factually,
+  gathered under one heading near the end.
+- Give the reason where there is evidence for it. When a comment, commit message, or decision record says why a thing
+  is done a certain way, state it and link the record. Where the reason is genuinely unknown, say that the rationale is
+  not recorded rather than inventing one.
+- Prefer prose and tables to code. Where an excerpt is unavoidable, keep it small. Use a diagram only where it does
+  work prose cannot: a state flow, a cache topology, a class hierarchy.
+
+## Explanation documents
+
+An explanation builds the mental model behind a subsystem: what problem it solves, what the alternatives were, and
+which properties the design buys.
+
+- Explain the design, do not specify it. Field lists, schemas, and exhaustive orderings belong in reference; link there
+  rather than restating them, so the two cannot drift apart.
+- Name the alternatives. An explanation that never says what was rejected leaves the reader unable to judge the design.
+  Where a rejection is recorded as a decision, link the record rather than repeating its reasoning.
+- State the properties the design buys and what they cost. Durability, ordering, staleness bounds, and failure behavior
+  are the payload.
+
+## How-to documents
+
+A how-to is a procedure for someone who already knows what they want to achieve.
+
+- Open with the preconditions and the end state, so a reader can tell before running anything whether this is the
+  procedure they want.
+- Give every step a verification. A step whose success cannot be observed is a step that fails silently. Name the
+  query, endpoint, or field that confirms it.
+- Carry the reversal alongside the action. Where a step can be undone, say how; where it cannot, say so plainly and say
+  what to do instead.
+- Keep commands exact and parameterised. Values that vary by deployment appear as named placeholders, never as one
+  machine's values pasted in.
+
 ## Headings and prose
 
 - Headings name the content beneath them. A heading never describes the document, its length, or the reader's
@@ -104,6 +147,13 @@ contract holds and a maintainer can see what breaks when it changes.
 - Avoid the "not X, but Y" construction. State what is true.
 - Write in the present tense and describe behavior as it is. Milestone, incident, and point-in-time language ages out
   of date and is disallowed.
+- Write about the system, not about the documentation. A page does not define the documentation framework, classify
+  itself within it, rank its own importance, or refer to the batch of pages it was written alongside. "This document
+  explains X" is fine once, at the top, where it saves the reader time; a paragraph on what kind of document it is, is
+  not. Instructions to whoever writes and regenerates the tree belong in this standard, or in a comment the published
+  page does not show.
+- Address the reader as someone with a task, not as a category. Say what a page holds and let them choose; do not
+  narrate what sort of reader they are or which question they are holding.
 
 ## Cross-linking
 
@@ -122,8 +172,8 @@ Where a repository publishes its `docs/` tree as a site, navigation obeys four r
   not grow with corpus size.
 - Navigation depth stays within two levels. Structure deeper than that belongs inside a page, where the table of
   contents carries it.
-- The landing page routes by intent within its opening summary: which class answers which kind of question, each named
-  with a link. A reader should spend their first screenful choosing a direction, never decoding the site.
+- The landing page routes within its opening summary: each class named, linked, and described by what a reader finds
+  there. A reader should spend their first screenful choosing a direction, never decoding the site.
 
 ## Maintenance
 

@@ -36,7 +36,7 @@ TOPIC_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 VOCABULARY_PATTERN = re.compile(r"^- `([a-z0-9-]+)`:", re.MULTILINE)
 GENERATED_RECORD_PATTERN = re.compile(r"^\d{4}-[a-z0-9-]+\.md$")
 
-STUB_BANNER = "> **Status: planned document, not yet authored.**"
+STUB_BANNER = "> **Not yet documented in full.**"
 SUMMARY_LIMIT = 200
 
 # `status` is a theme-reserved key: a page carrying it gets a marker in site navigation.
@@ -232,8 +232,8 @@ def render_class_table(documents: list[Document]) -> str:
         lines += [
             "### Planned",
             "",
-            "These documents are stubs. Each states its scope and the code locations that",
-            "hold the behavior until it is written.",
+            "Not yet documented in full. Each page describes its subsystem briefly and names",
+            "the code that holds the behavior.",
             "",
             "| Document | Scope |",
             "| --- | --- |",
