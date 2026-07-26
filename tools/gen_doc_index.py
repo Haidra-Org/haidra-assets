@@ -38,8 +38,12 @@ GENERATED_RECORD_PATTERN = re.compile(r"^\d{4}-[a-z0-9-]+\.md$")
 
 STUB_BANNER = "> **Status: planned document, not yet authored.**"
 SUMMARY_LIMIT = 200
-STATUSES = ("authored", "stub")
-STATUS_LABELS = {"authored": "Authored", "stub": "Planned"}
+
+# `status` is a theme-reserved key: a page carrying it gets a marker in site navigation.
+# Only a stub declares one, so the marker means "planned" wherever it appears rather than
+# decorating every page in the tree.
+AUTHORED = "authored"
+STUB = "stub"
 DEFAULT_ORDER = 100
 DEFAULT_EXCLUDES = ("haidra-assets",)
 INDEX_NAMES = ("README.md", "index.md")
@@ -73,9 +77,10 @@ class Document:
 def parse_front_matter(text: str) -> dict[str, str]:
     """Extract ``key: value`` pairs from a leading YAML front-matter block.
 
-    Values are returned as written, minus surrounding quotes. Inline sequences keep
-    their brackets for the caller to split; nothing here needs a YAML parser, and
-    avoiding one keeps the tool standard-library only.
+    Values are returned exactly as written, quotes included, because the quoting is
+    itself validated: the site's YAML parser rejects an unquoted scalar containing
+    ``": "``, and a lenient reader here would accept front matter that renders as
+    literal text on the published page.
     """
     if not text.startswith("---\n"):
         return {}
@@ -88,8 +93,25 @@ def parse_front_matter(text: str) -> dict[str, str]:
         if stripped.startswith("#") or ":" not in stripped:
             continue
         key, _, value = stripped.partition(":")
-        fields[key.strip()] = value.strip().strip("\"'")
+        fields[key.strip()] = value.strip()
     return fields
+
+
+def unquote(relative: str, key: str, raw: str) -> str:
+    """Return the text of a double-quoted scalar, rejecting anything else.
+
+    Requiring quotes is the whole point: an unquoted YAML scalar holding ``": "`` or
+    opening with an indicator character fails to parse, and a failed parse publishes the
+    front matter as page content.
+    """
+    if len(raw) < 2 or not raw.startswith('"') or not raw.endswith('"'):
+        raise DocError(f"{relative}: {key} must be a double-quoted string, got {raw}")
+    value = raw[1:-1]
+    if not value:
+        raise DocError(f"{relative}: {key} must not be empty")
+    if '"' in value or "\\" in value:
+        raise DocError(f"{relative}: {key} must not contain a quote or a backslash")
+    return value
 
 
 def parse_topics(raw: str) -> list[str]:
@@ -112,11 +134,11 @@ def read_document(path: Path, root: Path) -> Document:
     if not fields:
         raise DocError(f"{relative}: missing YAML front matter")
 
-    missing = [key for key in ("title", "summary", "status", "topics") if key not in fields]
+    missing = [key for key in ("title", "summary", "topics") if key not in fields]
     if missing:
         raise DocError(f"{relative}: front matter is missing {', '.join(missing)}")
 
-    title = fields["title"]
+    title = unquote(relative, "title", fields["title"])
     heading = TITLE_PATTERN.search(text)
     if heading is None:
         raise DocError(f"{relative}: no level-one heading")
@@ -126,20 +148,21 @@ def read_document(path: Path, root: Path) -> Document:
             f"{heading.group(1).strip()!r}",
         )
 
-    summary = fields["summary"]
+    summary = unquote(relative, "summary", fields["summary"])
     if len(summary) > SUMMARY_LIMIT:
         raise DocError(f"{relative}: summary is {len(summary)} characters, limit is {SUMMARY_LIMIT}")
     if "—" in summary or "—" in title:
         raise DocError(f"{relative}: em dash in front matter")
 
-    status = fields["status"]
-    if status not in STATUSES:
-        raise DocError(f"{relative}: status {status!r} is not one of {', '.join(STATUSES)}")
+    declared = fields.get("status")
+    if declared is not None and declared != STUB:
+        raise DocError(f"{relative}: status {declared!r} is not {STUB}; omit the key for an authored document")
+    status = declared or AUTHORED
     has_banner = STUB_BANNER in text
-    if status == "stub" and not has_banner:
-        raise DocError(f"{relative}: status is stub but the body carries no stub banner")
-    if status == "authored" and has_banner:
-        raise DocError(f"{relative}: status is authored but the body carries a stub banner")
+    if status == STUB and not has_banner:
+        raise DocError(f"{relative}: status is {STUB} but the body carries no stub banner")
+    if status == AUTHORED and has_banner:
+        raise DocError(f"{relative}: the body carries a stub banner but the front matter has no status: {STUB}")
 
     topics = parse_topics(fields["topics"])
     if not topics:
@@ -262,6 +285,14 @@ def check_vocabulary(topics_path: Path, documents: list[Document]) -> list[str]:
     return problems
 
 
+def render_document_topics(document: Document) -> str:
+    """Render one document's own topic line, linking each topic into the topics page."""
+    depth = document.relative.count("/")
+    prefix = "../" * depth
+    links = ", ".join(f"[{topic}]({prefix}topics.md#{topic})" for topic in document.topics)
+    return f"Topics: {links}\n"
+
+
 def splice(path: Path, name: str, body: str) -> str:
     """Return ``path``'s text with the named generated block replaced by ``body``."""
     pattern = re.compile(BLOCK_PATTERN_TEMPLATE.format(name=name), re.DOTALL)
@@ -270,6 +301,24 @@ def splice(path: Path, name: str, body: str) -> str:
     if match is None:
         raise DocError(f"{path}: no generated block named {name!r}")
     return text[: match.start("body")] + body + text[match.end("body") :]
+
+
+def splice_or_insert(path: Path, name: str, body: str) -> str:
+    """Splice the named block, inserting it below the level-one heading if it is absent.
+
+    Inserting rather than failing means a new document needs no boilerplate: write the
+    front matter and the heading, run the tool, and the topic line appears.
+    """
+    text = path.read_text(encoding="utf-8")
+    if f"BEGIN GENERATED: {name} " in text:
+        return splice(path, name, body)
+    heading = TITLE_PATTERN.search(text)
+    if heading is None:
+        raise DocError(f"{path}: no level-one heading to insert the {name!r} block below")
+    block = (
+        f"\n\n<!-- BEGIN GENERATED: {name} (gen_doc_index.py) -->\n{body}<!-- END GENERATED: {name} -->"
+    )
+    return text[: heading.end()] + block + text[heading.end() :]
 
 
 def flatten_nav(entry: object, found: list[str]) -> None:
@@ -366,6 +415,10 @@ def main(argv: list[str] | None = None) -> int:
             body = render_class_table([doc for doc in documents if doc.class_name == class_name])
             pending.append((index_path, splice(index_path, "documents", body)))
         pending.append((topics_path, splice(topics_path, "topics", render_topics(documents, class_titles))))
+        for document in documents:
+            pending.append(
+                (document.path, splice_or_insert(document.path, "topics", render_document_topics(document))),
+            )
     except DocError as error:
         print(error, file=sys.stderr)
         return 1

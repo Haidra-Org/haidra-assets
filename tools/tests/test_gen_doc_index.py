@@ -53,16 +53,20 @@ def write_doc(
     *,
     title: str,
     summary: str = "A one-line summary.",
-    status: str = "authored",
+    status: str | None = None,
     topics: str = "[alpha]",
     order: int | None = None,
     heading: str | None = None,
     body: str = "Body text.\n",
+    quoted: bool = True,
 ) -> Path:
+    quote = '"' if quoted else ""
+    status_line = f"status: {status}\n" if status is not None else ""
     order_line = f"order: {order}\n" if order is not None else ""
     path = directory / f"{slug}.md"
     path.write_text(
-        f"---\ntitle: {title}\nsummary: {summary}\nstatus: {status}\ntopics: {topics}\n{order_line}---\n\n"
+        f"---\ntitle: {quote}{title}{quote}\nsummary: {quote}{summary}{quote}\n"
+        f"{status_line}topics: {topics}\n{order_line}---\n\n"
         f"# {heading or title}\n\n{body}",
         encoding="utf-8",
         newline="\n",
@@ -137,6 +141,38 @@ def test_topics_page_groups_documents_across_classes(tree: Path) -> None:
     assert "Reference: [Widgets](reference/widgets.md)" in topics[topics.index("### alpha") : topics.index("### beta")]
 
 
+def test_each_document_gets_its_own_topic_line_below_the_heading(tree: Path) -> None:
+    run(tree)
+
+    document = (tree / "reference" / "widgets.md").read_text(encoding="utf-8")
+    assert "# Widgets\n\n<!-- BEGIN GENERATED: topics (gen_doc_index.py) -->\n" in document
+    assert "Topics: [alpha](../topics.md#alpha), [beta](../topics.md#beta)\n" in document
+    assert document.endswith("Body text.\n")
+
+
+def test_a_document_topic_line_is_refreshed_rather_than_duplicated(tree: Path) -> None:
+    run(tree)
+    write_doc(tree / "reference", "widgets", title="Widgets", topics="[alpha]")
+    run(tree)
+
+    document = (tree / "reference" / "widgets.md").read_text(encoding="utf-8")
+    assert document.count("BEGIN GENERATED: topics") == 1
+    assert "Topics: [alpha](../topics.md#alpha)\n" in document
+
+
+def test_a_changed_topic_set_rewrites_the_existing_block_in_place(tree: Path) -> None:
+    run(tree)
+    path = tree / "reference" / "widgets.md"
+    text = path.read_text(encoding="utf-8")
+    path.write_text(text.replace("topics: [alpha, beta]", "topics: [alpha]"), encoding="utf-8", newline="\n")
+    assert run(tree) == 0
+
+    document = path.read_text(encoding="utf-8")
+    assert document.count("BEGIN GENERATED: topics") == 1
+    assert "Topics: [alpha](../topics.md#alpha)\n" in document
+    assert "topics.md#beta" not in document
+
+
 def test_planned_documents_are_marked_in_the_topics_page(tree: Path) -> None:
     write_doc(tree / "reference", "gadgets", title="Gadgets", status="stub", body=STUB_BANNER_BODY)
     run(tree)
@@ -168,6 +204,31 @@ def test_missing_front_matter_is_rejected(tree: Path) -> None:
 
 def test_unknown_status_is_rejected(tree: Path) -> None:
     write_doc(tree / "reference", "odd", title="Odd", status="draft")
+    assert run(tree) == 1
+
+
+def test_authored_status_must_be_omitted_rather_than_declared(tree: Path) -> None:
+    write_doc(tree / "reference", "explicit", title="Explicit", status="authored")
+    assert run(tree) == 1
+
+
+def test_unquoted_title_and_summary_are_rejected(tree: Path) -> None:
+    write_doc(tree / "reference", "bare", title="Bare", quoted=False)
+    assert run(tree) == 1
+
+
+def test_summary_holding_a_colon_is_accepted_when_quoted(tree: Path) -> None:
+    write_doc(tree / "reference", "colonic", title="Colonic", summary="A subject: its elaboration.")
+    assert run(tree) == 0
+
+
+def test_quote_inside_a_value_is_rejected(tree: Path) -> None:
+    write_doc(tree / "reference", "nested", title="Nested", summary='A "quoted" phrase.')
+    assert run(tree) == 1
+
+
+def test_an_empty_summary_is_rejected(tree: Path) -> None:
+    write_doc(tree / "reference", "hollow", title="Hollow", summary="")
     assert run(tree) == 1
 
 

@@ -27,19 +27,34 @@ disagree with what it indexes. Each curated document carries YAML front matter:
 
 ```yaml
 ---
-title: Job matching and pop            # must equal the document's level-one heading
-summary: One line, at most 200 characters, shown in every index that lists this document.
-status: authored                       # authored | stub
-topics: [requests, workers]            # each topic must be defined in topics.md
-order: 30                              # optional, orders the document within its class (default 100)
+title: "Job matching and pop" # must equal the document's level-one heading
+summary: "One line, at most 200 characters, shown in every index that lists this document."
+status: stub # omit entirely for an authored document
+topics: [requests, workers] # each topic must be defined in topics.md
+order: 30 # optional, orders the document within its class (default 100)
 ---
 ```
 
-From that, the tool rewrites two kinds of generated block, leaving the hand-written prose around them untouched:
+`title` and `summary` must be double-quoted. An unquoted YAML scalar containing `": "` does not parse, and a
+site generator that fails to parse front matter publishes it as page text without reporting an error.
+
+`status` is omitted from an authored document. The key is reserved by Material-derived themes, which put a
+marker beside the navigation entry of any page carrying it, so declaring it everywhere marks everything and
+says nothing. A stub declares `status: stub` and the theme is given the matching label:
+
+```toml
+[project.extra.status]
+stub = "Planned document, not yet authored"
+```
+
+From that front matter, the tool rewrites three kinds of generated block, leaving the hand-written prose around
+them untouched:
 
 - `documents` in each class index (`docs/<class>/README.md`): a table of authored documents, then a table of
   planned stubs.
 - `topics` in `docs/topics.md`: every topic with the documents that declare it, across classes.
+- `topics` in each document: its own topic line, linking into the topics page. This block is inserted below the
+  level-one heading when it is absent, so a new document needs no boilerplate.
 
 A block is delimited by `<!-- BEGIN GENERATED: name (gen_doc_index.py) -->` and `<!-- END GENERATED: name -->`.
 A documentation class is any directory under the docs root holding a `README.md`, minus `--exclude` names

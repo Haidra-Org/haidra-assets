@@ -39,21 +39,26 @@ reader is already lost.
 
 ```yaml
 ---
-title: Job matching and pop # equals the document's level-one heading
-summary: One line, at most 200 characters, shown wherever this document is listed.
-status: authored # authored | stub
+title: "Job matching and pop" # equals the document's level-one heading
+summary: "One line, at most 200 characters, shown wherever this document is listed."
+status: stub # omitted entirely for an authored document
 topics: [requests, workers] # each defined in the topics page
 order: 30 # optional; sequences the document within its class
 ---
 ```
 
+- `title` and `summary` are double-quoted. An unquoted scalar containing `": "` is not valid YAML, and a site
+  generator that cannot parse front matter publishes it as page text. Front matter is validated against the parser
+  that will consume it, never against a lenient reader.
 - `summary` is what an index shows. It states what the document holds, not that the document exists.
-- `status` is `authored` or `stub`. A stub is published rather than withheld: it scopes what the document will cover,
-  names the code that holds the behavior until then, and is marked as planned in its class index. A stub says what is
-  planned; it never says when.
+- `status` marks a stub and is absent otherwise. A stub is published rather than withheld: it scopes what the document
+  will cover, names the code that holds the behavior until then, and is marked as planned in its class index. A stub
+  says what is planned; it never says when. The key is reserved by Material-derived themes, which mark the navigation
+  entry of every page carrying it, so marking only stubs is what makes the marker informative.
 - `topics` are subject tags shared across classes. A topics page defines each tag and collects the documents carrying
-  it, which is how a reader holding a subject reaches the explanation, the reference, and the procedure together. A tag
-  must be defined before it is used, and a defined tag no document uses is removed. Without that rule the tag set
+  it, which is how a reader holding a subject reaches the explanation, the reference, and the procedure together. Each
+  document also carries its own topics, generated, so a reader who arrives mid-tree can leave through the subject. A
+  tag must be defined before it is used, and a defined tag no document uses is removed. Without that rule the tag set
   splinters into near-duplicates and stops being a navigation surface.
 
 Where a repository publishes a site, navigation order and display titles stay curated; navigation membership does not.
