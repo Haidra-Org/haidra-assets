@@ -147,9 +147,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    record_paths = sorted(
-        path for path in args.decisions_dir.iterdir() if RECORD_PATTERN.match(path.name)
-    )
+    record_paths = sorted(path for path in args.decisions_dir.iterdir() if RECORD_PATTERN.match(path.name))
     if not record_paths:
         print(f"No NNNN-*.md records found in {args.decisions_dir}", file=sys.stderr)
         return 1

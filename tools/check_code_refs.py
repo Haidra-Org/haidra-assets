@@ -49,9 +49,7 @@ def prose_lines(text: str) -> list[tuple[int, str]]:
     return lines
 
 
-def find_missing(
-    doc_paths: list[Path], repo_root: Path, roots: set[str]
-) -> list[tuple[Path, int, str]]:
+def find_missing(doc_paths: list[Path], repo_root: Path, roots: set[str]) -> list[tuple[Path, int, str]]:
     missing: list[tuple[Path, int, str]] = []
     for doc in iter_markdown_files(doc_paths):
         for number, line in prose_lines(doc.read_text(encoding="utf-8")):

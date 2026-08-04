@@ -144,8 +144,7 @@ def read_document(path: Path, root: Path) -> Document:
         raise DocError(f"{relative}: no level-one heading")
     if heading.group(1).strip() != title:
         raise DocError(
-            f"{relative}: front-matter title {title!r} does not match heading "
-            f"{heading.group(1).strip()!r}",
+            f"{relative}: front-matter title {title!r} does not match heading {heading.group(1).strip()!r}",
         )
 
     summary = unquote(relative, "summary", fields["summary"])
@@ -315,9 +314,7 @@ def splice_or_insert(path: Path, name: str, body: str) -> str:
     heading = TITLE_PATTERN.search(text)
     if heading is None:
         raise DocError(f"{path}: no level-one heading to insert the {name!r} block below")
-    block = (
-        f"\n\n<!-- BEGIN GENERATED: {name} (gen_doc_index.py) -->\n{body}<!-- END GENERATED: {name} -->"
-    )
+    block = f"\n\n<!-- BEGIN GENERATED: {name} (gen_doc_index.py) -->\n{body}<!-- END GENERATED: {name} -->"
     return text[: heading.end()] + block + text[heading.end() :]
 
 
