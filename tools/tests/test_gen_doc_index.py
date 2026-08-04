@@ -60,6 +60,7 @@ def write_doc(
     body: str = "Body text.\n",
     quoted: bool = True,
 ) -> Path:
+    """Write a temporary document with the given front matter and return its path."""
     quote = '"' if quoted else ""
     status_line = f"status: {status}\n" if status is not None else ""
     order_line = f"order: {order}\n" if order is not None else ""
@@ -89,10 +90,12 @@ def tree(tmp_path: Path) -> Path:
 
 
 def run(root: Path, *extra: str) -> int:
+    """Execute the generator on the given root and return its exit code."""
     return gen_doc_index.main([str(root), *extra])
 
 
 def test_generated_block_is_filled_and_surrounding_prose_survives(tree: Path) -> None:
+    """The generator fills the generated block in the index, and leaves the surrounding prose alone."""
     assert run(tree) == 0
 
     index = (tree / "reference" / "README.md").read_text(encoding="utf-8")
@@ -102,6 +105,7 @@ def test_generated_block_is_filled_and_surrounding_prose_survives(tree: Path) ->
 
 
 def test_regenerating_unchanged_documents_is_a_no_op(tree: Path) -> None:
+    """Regenerating the index when nothing has changed does not modify any files."""
     run(tree)
     before = (tree / "reference" / "README.md").read_text(encoding="utf-8")
     run(tree)
@@ -109,6 +113,7 @@ def test_regenerating_unchanged_documents_is_a_no_op(tree: Path) -> None:
 
 
 def test_authored_documents_precede_planned_stubs(tree: Path) -> None:
+    """Authored documents are listed before planned stubs in the index, regardless of their order field."""
     write_doc(
         tree / "reference",
         "gadgets",
@@ -123,6 +128,7 @@ def test_authored_documents_precede_planned_stubs(tree: Path) -> None:
 
 
 def test_order_field_sequences_documents_within_a_class(tree: Path) -> None:
+    """The order field in front matter determines position in the index relative to other documents."""
     write_doc(tree / "reference", "aardvarks", title="Aardvarks", order=10)
     write_doc(tree / "reference", "zebras", title="Zebras", order=5)
     run(tree)
@@ -132,6 +138,7 @@ def test_order_field_sequences_documents_within_a_class(tree: Path) -> None:
 
 
 def test_topics_page_groups_documents_across_classes(tree: Path) -> None:
+    """The topics page lists documents from multiple classes under the same topic heading."""
     run(tree)
 
     topics = (tree / "topics.md").read_text(encoding="utf-8")
@@ -142,6 +149,7 @@ def test_topics_page_groups_documents_across_classes(tree: Path) -> None:
 
 
 def test_each_document_gets_its_own_topic_line_below_the_heading(tree: Path) -> None:
+    """A document that declares topics has a line inserted below its heading that lists those topics."""
     run(tree)
 
     document = (tree / "reference" / "widgets.md").read_text(encoding="utf-8")
@@ -151,6 +159,7 @@ def test_each_document_gets_its_own_topic_line_below_the_heading(tree: Path) -> 
 
 
 def test_a_document_topic_line_is_refreshed_rather_than_duplicated(tree: Path) -> None:
+    """A document that changes its topics has its topic line refreshed in place, rather than duplicated."""
     run(tree)
     write_doc(tree / "reference", "widgets", title="Widgets", topics="[alpha]")
     run(tree)
@@ -161,6 +170,7 @@ def test_a_document_topic_line_is_refreshed_rather_than_duplicated(tree: Path) -
 
 
 def test_a_changed_topic_set_rewrites_the_existing_block_in_place(tree: Path) -> None:
+    """A document that changes its topics has its topic line rewritten in place, rather than duplicated."""
     run(tree)
     path = tree / "reference" / "widgets.md"
     text = path.read_text(encoding="utf-8")
@@ -174,6 +184,7 @@ def test_a_changed_topic_set_rewrites_the_existing_block_in_place(tree: Path) ->
 
 
 def test_planned_documents_are_marked_in_the_topics_page(tree: Path) -> None:
+    """A document that is planned but not yet authored is marked as such in the topics page."""
     write_doc(tree / "reference", "gadgets", title="Gadgets", status="stub", body=STUB_BANNER_BODY)
     run(tree)
 
@@ -181,6 +192,7 @@ def test_planned_documents_are_marked_in_the_topics_page(tree: Path) -> None:
 
 
 def test_check_passes_on_current_output_and_fails_once_a_document_changes(tree: Path) -> None:
+    """The --check option returns 0 if the index is up to date, and 1 if it is not."""
     run(tree)
     assert run(tree, "--check") == 0
 
@@ -189,81 +201,97 @@ def test_check_passes_on_current_output_and_fails_once_a_document_changes(tree: 
 
 
 def test_check_fails_when_a_generated_block_was_never_filled(tree: Path) -> None:
+    """A document that has a generated block but no content in it is rejected by --check."""
     assert run(tree, "--check") == 1
 
 
 def test_title_must_match_the_heading(tree: Path) -> None:
+    """A document whose title does not match its heading is rejected."""
     write_doc(tree / "reference", "mismatch", title="Declared", heading="Actual")
     assert run(tree) == 1
 
 
 def test_missing_front_matter_is_rejected(tree: Path) -> None:
+    """A document that has no front matter at all is rejected."""
     (tree / "reference" / "bare.md").write_text("# Bare\n\nNo front matter.\n", encoding="utf-8", newline="\n")
     assert run(tree) == 1
 
 
 def test_unknown_status_is_rejected(tree: Path) -> None:
+    """A document that declares a status that is not in the vocabulary is rejected."""
     write_doc(tree / "reference", "odd", title="Odd", status="draft")
     assert run(tree) == 1
 
 
 def test_authored_status_must_be_omitted_rather_than_declared(tree: Path) -> None:
+    """A document that is authored should not declare its status as "authored"; it should omit the status field."""
     write_doc(tree / "reference", "explicit", title="Explicit", status="authored")
     assert run(tree) == 1
 
 
 def test_unquoted_title_and_summary_are_rejected(tree: Path) -> None:
+    """A title or summary that is not quoted is rejected, even if it contains no special characters."""
     write_doc(tree / "reference", "bare", title="Bare", quoted=False)
     assert run(tree) == 1
 
 
 def test_summary_holding_a_colon_is_accepted_when_quoted(tree: Path) -> None:
+    """A summary that contains a colon is accepted, as long as it is quoted."""
     write_doc(tree / "reference", "colonic", title="Colonic", summary="A subject: its elaboration.")
     assert run(tree) == 0
 
 
 def test_quote_inside_a_value_is_rejected(tree: Path) -> None:
+    """A summary that contains a quote character is rejected, even if it is quoted."""
     write_doc(tree / "reference", "nested", title="Nested", summary='A "quoted" phrase.')
     assert run(tree) == 1
 
 
 def test_an_empty_summary_is_rejected(tree: Path) -> None:
+    """A summary that is empty is rejected."""
     write_doc(tree / "reference", "hollow", title="Hollow", summary="")
     assert run(tree) == 1
 
 
 def test_stub_status_requires_the_stub_banner(tree: Path) -> None:
+    """A document that declares itself as a stub but does not have the stub banner is rejected."""
     write_doc(tree / "reference", "unbannered", title="Unbannered", status="stub")
     assert run(tree) == 1
 
 
 def test_stub_banner_requires_stub_status(tree: Path) -> None:
+    """A document that has the stub banner but does not declare itself as a stub is rejected."""
     write_doc(tree / "reference", "misbannered", title="Misbannered", body=STUB_BANNER_BODY)
     assert run(tree) == 1
 
 
 def test_oversized_summary_is_rejected(tree: Path) -> None:
+    """A summary that exceeds the maximum allowed length is rejected."""
     write_doc(tree / "reference", "verbose", title="Verbose", summary="x" * (gen_doc_index.SUMMARY_LIMIT + 1))
     assert run(tree) == 1
 
 
 def test_topic_outside_the_vocabulary_is_rejected(tree: Path) -> None:
+    """A topic that is not listed in the vocabulary is an error."""
     write_doc(tree / "reference", "stray", title="Stray", topics="[gamma]")
     assert run(tree) == 1
 
 
 def test_vocabulary_entry_used_by_no_document_is_rejected(tree: Path) -> None:
+    """A topic that is not used by any document is an error."""
     page = (tree / "topics.md").read_text(encoding="utf-8")
     (tree / "topics.md").write_text(page + "\n- `gamma`: nobody's subject.\n", encoding="utf-8", newline="\n")
     assert run(tree) == 1
 
 
 def test_index_pages_are_not_listed_as_documents(tree: Path) -> None:
+    """An index page is not listed as a document in its own index, even if it has front matter."""
     run(tree)
     assert "README.md)" not in (tree / "reference" / "README.md").read_text(encoding="utf-8")
 
 
 def test_excluded_directories_are_skipped(tree: Path) -> None:
+    """A directory that is excluded from the index is not scanned, and its contents are not listed in the index."""
     vendored = tree / "vendored"
     vendored.mkdir()
     (vendored / "README.md").write_text("# Vendored\n", encoding="utf-8", newline="\n")
@@ -273,6 +301,7 @@ def test_excluded_directories_are_skipped(tree: Path) -> None:
 
 
 def write_nav(root: Path, *entries: str) -> Path:
+    """Write a temporary zensical.toml file with the given nav entries and return its path."""
     path = root.parent / "zensical.toml"
     body = "\n".join(f'    {{ "Page {index}" = "{entry}" }},' for index, entry in enumerate(entries))
     path.write_text(NAV_TEMPLATE.format(entries=body), encoding="utf-8", newline="\n")
@@ -289,31 +318,37 @@ FULL_NAV = (
 
 
 def test_complete_nav_passes(tree: Path) -> None:
+    """A nav that lists all the documents in the tree is accepted."""
     nav = write_nav(tree, *FULL_NAV)
     assert run(tree, "--nav", str(nav)) == 0
 
 
 def test_root_page_missing_from_nav_fails(tree: Path) -> None:
+    """A root page that is not listed in the nav is an error."""
     nav = write_nav(tree, *[entry for entry in FULL_NAV if entry != "topics.md"])
     assert run(tree, "--nav", str(nav)) == 1
 
 
 def test_document_missing_from_nav_fails(tree: Path) -> None:
+    """A document that is not listed in the nav is an error."""
     nav = write_nav(tree, *[entry for entry in FULL_NAV if entry != "reference/widgets.md"])
     assert run(tree, "--nav", str(nav)) == 1
 
 
 def test_duplicated_nav_entry_fails(tree: Path) -> None:
+    """A document that is listed twice in the nav is an error."""
     nav = write_nav(tree, *FULL_NAV, "reference/widgets.md")
     assert run(tree, "--nav", str(nav)) == 1
 
 
 def test_nav_entry_without_a_file_fails(tree: Path) -> None:
+    """A nav entry that does not correspond to a file in the documentation tree is an error."""
     nav = write_nav(tree, *FULL_NAV, "reference/imaginary.md")
     assert run(tree, "--nav", str(nav)) == 1
 
 
 def test_individually_listed_generated_record_fails(tree: Path) -> None:
+    """A document that is listed in the nav but is also a generated record should not be listed in the nav."""
     decisions = tree / "decisions"
     decisions.mkdir()
     (decisions / "0001-a-decision.md").write_text("# A decision\n", encoding="utf-8", newline="\n")

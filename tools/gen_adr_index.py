@@ -47,6 +47,7 @@ class Record:
 
     @property
     def number(self) -> str:
+        """Return the record's four-digit number, for use in Mermaid graph IDs."""
         return self.filename[:4]
 
 
@@ -68,6 +69,7 @@ def parse_front_matter(text: str) -> dict[str, str]:
 
 
 def read_record(path: Path) -> Record:
+    """Read a decision record from disk and return a Record object."""
     text = path.read_text(encoding="utf-8")
     front_matter = parse_front_matter(text)
     title_match = TITLE_PATTERN.search(text)
@@ -85,6 +87,7 @@ def read_record(path: Path) -> Record:
 
 
 def mermaid_label(record: Record) -> str:
+    """Return a label for a record suitable for use in a Mermaid graph."""
     label = f"{record.number}: {record.title}"
     if len(label) > MERMAID_LABEL_LIMIT:
         label = label[: MERMAID_LABEL_LIMIT - 1].rstrip() + "…"
@@ -92,6 +95,7 @@ def mermaid_label(record: Record) -> str:
 
 
 def render_index(records: list[Record]) -> str:
+    """Render the index of decision records as a Markdown string."""
     lines: list[str] = [
         SPDX_HEADER,
         "",
@@ -132,6 +136,7 @@ def render_index(records: list[Record]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Generate an index of MADR decision records in a directory."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("decisions_dir", type=Path, help="Directory containing NNNN-*.md records")
     parser.add_argument(

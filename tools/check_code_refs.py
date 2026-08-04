@@ -27,6 +27,7 @@ FENCE_PATTERN = re.compile(r"^(```|~~~)")
 
 
 def iter_markdown_files(paths: list[Path]) -> list[Path]:
+    """Yield all Markdown files in the given paths, recursively descending directories."""
     files: list[Path] = []
     for path in paths:
         if path.is_dir():
@@ -50,6 +51,7 @@ def prose_lines(text: str) -> list[tuple[int, str]]:
 
 
 def find_missing(doc_paths: list[Path], repo_root: Path, roots: set[str]) -> list[tuple[Path, int, str]]:
+    """Return a list of cited repository paths that do not exist."""
     missing: list[tuple[Path, int, str]] = []
     for doc in iter_markdown_files(doc_paths):
         for number, line in prose_lines(doc.read_text(encoding="utf-8")):
@@ -63,6 +65,7 @@ def find_missing(doc_paths: list[Path], repo_root: Path, roots: set[str]) -> lis
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Verify that cited repository paths exist."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("docs", nargs="+", type=Path, help="Markdown files or directories to scan")
     parser.add_argument(

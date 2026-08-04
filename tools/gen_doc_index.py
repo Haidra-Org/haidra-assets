@@ -67,10 +67,12 @@ class Document:
 
     @property
     def class_name(self) -> str:
+        """Return the name of the Diataxis class this document belongs to."""
         return self.relative.split("/")[0]
 
     @property
     def filename(self) -> str:
+        """Return the document's filename, for linking from an index."""
         return self.path.name
 
 
@@ -115,6 +117,7 @@ def unquote(relative: str, key: str, raw: str) -> str:
 
 
 def parse_topics(raw: str) -> list[str]:
+    """Parse a comma-separated list of topics from a front-matter field."""
     inner = raw.strip()
     if inner.startswith("[") and inner.endswith("]"):
         inner = inner[1:-1]
@@ -213,6 +216,7 @@ def discover(root: Path, excludes: tuple[str, ...]) -> tuple[dict[str, Path], li
 
 
 def sort_key(document: Document) -> tuple[int, str]:
+    """Return a key for sorting documents by order and title."""
     return (document.order, document.title)
 
 
@@ -319,6 +323,7 @@ def splice_or_insert(path: Path, name: str, body: str) -> str:
 
 
 def flatten_nav(entry: object, found: list[str]) -> None:
+    """Recursively flatten a Zensical navigation structure into a list of paths."""
     if isinstance(entry, str):
         found.append(entry)
     elif isinstance(entry, list):
@@ -363,6 +368,7 @@ def check_nav(nav_path: Path, root: Path, indexes: dict[str, Path], documents: l
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Generate documentation index and check navigation."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("docs_dir", type=Path, help="Documentation root, normally docs/")
     parser.add_argument(
