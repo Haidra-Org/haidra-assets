@@ -218,9 +218,15 @@ Topical organization belongs to the index. The records are indexed by a generate
 each record's status and date, and that page is how the corpus enters navigation: records are never listed
 individually, so navigation does not grow with the record count.
 
-An accepted record is immutable in substance. Permissible edits are typo fixes and repairing file or symbol references
-that the codebase has moved out from under the record. Context, Decision Outcome, and Consequences are never rewritten
-to match later reality; a changed decision gets a new record.
+An accepted record is immutable in substance once its decision has stood through a production release. Permissible
+edits are then typo fixes and repairing file or symbol references that the codebase has moved out from under the
+record. Context, Decision Outcome, and Consequences are never rewritten to match later reality; a changed decision gets
+a new record.
+
+While the initiative a record belongs to is still being built out, a record whose decision is reversed or narrowed by
+that same initiative is amended in place: the body states the current decision, the date is updated, and no amendment
+section is added. Separate records for each reversal within one initiative would leave a trail that no reader follows.
+The record's history stays in version control.
 
 The records are the asset; publishing tooling is replaceable and is not part of this standard. A browse surface, when a
 repository or the organization wants one, is a static site built from the same flat directory the records live in, with
