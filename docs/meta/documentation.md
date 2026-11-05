@@ -1,7 +1,8 @@
 # Haidra Documentation Standard
 
 This document governs in-repository documentation (the `docs/` tree) for Haidra-Org repositories. It applies to
-documents written for contributors and operators, not to docstrings, which are covered by [python.md](python.md).
+documents written for contributors and operators, not to docstrings, which are covered by [python.md](python.md), nor
+to user-facing product text, which is covered by [copy.md](copy.md).
 
 In brief:
 
