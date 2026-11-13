@@ -128,6 +128,9 @@ These principles are opinionated and exist for consistency and maintainability. 
 - Class docstrings:
     - Summarize the class's purpose and behavior.
     - Data-class or pydantic models' docstring should begin with "Represents..."
+        - The opening separates a class that holds data from a functional class with complex inner workings. A reader can tell which kind of class it is from the first word.
+        - This is the accepted use of "represents". Prose rules that ask for "is" over "represents" in running text do not apply to this opening.
+        - A functional class does not open with "Represents". Summarize what it does.
     - Add any additional sections as appropriate (e.g., `Examples:`).
         - See also the [mkdocs enabled projects](#mkdocs-enabled-projects) section below.
 - Function/Method docstrings:
