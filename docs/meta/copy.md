@@ -5,6 +5,10 @@ steps, concept pages, empty states, errors, and any other text a reader sees whi
 `docs/` tree is covered by [documentation.md](documentation.md). Where both documents apply, its prose rules also
 apply here.
 
+Literal wording, consistent terminology and accurate claim scope are shared principles. The interface requirements
+and novice image-user examples here govern product copy. Contributor and operator documentation uses the audience
+and task rules in [documentation.md](documentation.md), including the technical knowledge appropriate to its readers.
+
 These rules are prescriptive. If breaking a rule makes a text better, break it and give the reason in review.
 
 ## Summary
@@ -36,6 +40,12 @@ that the reader:
 - chooses how deep to go: skim, follow the steps, or read the full explanation
 
 Do not be vague or assume prior knowledge, nor should you be patronizing.
+
+Introduce product-specific concepts before an instruction depends on them. Keep the actual setting or feature name
+and explain its effect. Do not replace a precise term with an approximate synonym to make a sentence sound simpler.
+
+Qualify a term when several objects could fit it. Identify the relevant service, setting or result instead of using
+a bare noun with an uncertain referent. Keep the qualifier until a shorter mention is unambiguous.
 
 ## Words
 
@@ -205,6 +215,13 @@ the reader make the choice.
 - Start every page and every step with a sentence that says what it is for. That sentence is still useful when the
   rest of the text is cut off.
 - Order the content from general to detailed, so the reader can stop at any point.
+- Put preparation and consequences before the action that depends on them. Identify optional branches and give a
+  useful next step when an expected result does not occur. A waiting instruction includes how to recognize completion
+  or failure.
+- An opening summary or TL;DR may help readers choose a page or use its central takeaways without the full detail.
+  Preserve conditions that change what readers should do. Avoid repeating the opening in a second summary.
+- Review the sequence of ideas before shortening sentences. Start a paragraph with its main relationship, then
+  explain the mechanism and qualifications using concepts already introduced.
 
 ## Copy at several levels of detail
 

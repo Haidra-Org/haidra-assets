@@ -35,6 +35,24 @@ for each class live here rather than on the pages readers came to read.
 
 The rules below govern quality, and they apply within every class.
 
+## Audience and task
+
+Before drafting or restructuring a page, identify its primary task, assumed knowledge and successful outcome in
+review notes. Assume ordinary expertise in the reader's discipline. Introduce repository-specific terms when they
+first affect understanding or an action, with the relevant object, response field or consequence.
+
+Qualify terms that could denote several things in context. For example, specify the service or process meant by
+"instance". Use enough qualification to distinguish the referent, including in headings and sections reached
+directly. Shorter subsequent mentions are fine while that meaning remains clear.
+
+Keep secondary-audience material when it helps with the primary task. Move independently useful material to its
+appropriate page and link where it becomes relevant. Moving unrelated material to the end does not resolve an
+audience mismatch. Split by task or conceptual boundary, not by a fixed page length.
+
+The literal language, consistent terminology and claim-scoping principles in [copy.md](copy.md) also apply here.
+Its product-interface requirements and novice image-user assumptions do not apply automatically to technical docs.
+Preserve precise technical terms and explain them for the intended audience instead of replacing them with synonyms.
+
 ## Front matter and generated indexes
 
 Every curated document declares its own metadata, and every index that lists documents is generated from those
@@ -75,15 +93,21 @@ Membership is checked against the tree so a document cannot be added without app
 Every document opens with a summary a reader can stop after and still know what the document covers, who it is for, and
 where to go next.
 
-- It is positional. It comes first, before any other heading or body content.
+- It is the first substantive prose after the title and generated metadata.
 - It is at most roughly ten lines or five bullets.
-- It is introduced plainly with  `TL;DR`, `Too long; didn't read`, and `If you read nothing else`, `In brief:` or
-  carries no label at all.
+- A label such as `TL;DR` or `In brief:` is permitted when the summary helps readers decide whether to read the page,
+  or gives central takeaways that a typical reader can use without the full nuance. An unlabelled opening is also
+  sufficient. Do not add a second summary that repeats the opening.
+- Keep qualifications that change an action or make a takeaway true. A summary may omit supporting detail, but must
+  not promise a result that the body makes conditional.
 
 ## Progressive disclosure
 
 Heading hierarchy runs from overview to detail. A reader who stops at `##` has a correct picture at lower precision
 than a reader who continues to `###`. Detail refines the level above it and never contradicts it.
+
+Group sections by the concepts needed to understand them. Within a paragraph, state the main relationship before
+its mechanism and qualifications. Introduce concepts in dependency order before shortening individual sentences.
 
 ## Reference documents
 
@@ -106,7 +130,8 @@ Beyond the code map:
   Line numbers rot on the next edit; module and symbol names survive, and a checker can verify a path still exists.
 - Collect sharp edges rather than editorialising inline. Where current behavior carries a hazard (a cache with no
   invalidation, a non-obvious ordering, an ORM freshness trap), describe the mechanism and its consequences factually,
-  gathered under one heading near the end.
+  gathered under one heading near the end for lookup. Also state a consequential caveat before the action or beside
+  the claim it qualifies. A final hazards section must not be the first notice of a prerequisite or possible loss.
 - Give the reason where there is evidence for it. When a comment, commit message, or decision record says why a thing
   is done a certain way, state it and link the record. Where the reason is genuinely unknown, say that the rationale is
   not recorded rather than inventing one.
@@ -131,18 +156,31 @@ A how-to is a procedure for someone who already knows what they want to achieve.
 
 - Open with the preconditions and the end state, so a reader can tell before running anything whether this is the
   procedure they want.
-- Give every step a verification. A step whose success cannot be observed is a step that fails silently. Name the
-  query, endpoint, or field that confirms it.
-- Carry the reversal alongside the action. Where a step can be undone, say how; where it cannot, say so plainly and say
-  what to do instead.
+- Give observable checks at meaningful failure boundaries and for the final outcome. Name the query, endpoint or
+  field that confirms success. Related actions may share a check when a failure remains easy to locate. Avoid
+  verification boilerplate for actions whose result is already evident.
+- Put prerequisites, saved state and decision-relevant consequences before the action that requires them. Explain
+  recovery for consequential changes, including limits on reversal. Omit empty statements such as "reversal: none"
+  for a read-only operation and obvious instructions to remove newly added configuration.
+- Number steps when they form a sequence. Mark alternatives and optional branches, and identify the earlier outputs
+  each branch needs. Independent tasks do not become a sequence merely because they share a page.
+- For waiting and verification, state success and relevant terminal failures, then give a diagnostic next step if
+  success is not reached. Do not invent a timeout or service guarantee to make the procedure seem complete.
+- Distinguish illustrative output from exact assertions. Identify variable fields and conditional outcomes.
 - Keep commands exact and parameterised. Values that vary by deployment appear as named placeholders, never as one
   machine's values pasted in.
 
+## Tutorial documents
+
+A tutorial provides a bounded learning path to an observable result. State prerequisites and follow one coherent
+example. Apply the how-to rules for dependencies, verification and recovery. Explain example-specific choices so
+readers can distinguish them from normal practice. Optional extensions must not obscure the core completion point.
+When an outcome depends on a model or external service, explain the acceptable alternatives and how to continue.
+
 ## Headings and prose
 
-- Headings name the content beneath them. A heading never describes the document, its length, or the reader's
-  attention.
-- Summaries are positional. Their placement identifies them, so they need no performative label.
+- Headings name the content beneath them. Apart from the opening-summary labels permitted above, avoid headings
+  about the document's length or the reader's attention.
 - Confidence comes from specifics: numbers, file names, measured values. Adjectives do not supply it.
 - No em dashes. Use a colon, a full stop, a parenthetical, or a comma.
 - Avoid the "not X, but Y" construction. State what is true.
@@ -162,6 +200,17 @@ Explanation, reference, and how-to documents link to each other at the point whe
 and each link says what the target holds. A reader following a link knows before clicking whether it answers their
 question.
 
+Where the publishing format supports it, link critical terms and concepts to existing explanations at their first
+consequential use. Prefer the specific section that explains the concept over a broad landing page. Choose links
+that help the intended reader understand a distinction or perform an action. Avoid linking ordinary vocabulary or
+every repeated occurrence. A later independently useful section may repeat a link for readers arriving there
+directly. Keep enough explanation locally to follow the passage without opening the link. Do not create a glossary
+page solely to provide a link target.
+
+Give each contract a canonical reference home. Procedures include the subset needed for the task and link to the
+full contract. Keep short facts locally when removing them would force a reader to leave the procedure to understand
+or safely perform the next action. Check repeated facts for agreement when the contract changes.
+
 ## Site navigation
 
 Where a repository publishes its `docs/` tree as a site, navigation obeys four rules:
@@ -177,6 +226,11 @@ Where a repository publishes its `docs/` tree as a site, navigation obeys four r
   there. A reader should spend their first screenful choosing a direction, never decoding the site.
 
 ## Maintenance
+
+Review structure, procedural dependencies and terminology before sentence style. Check a direct arrival at each
+page: can the intended reader understand the terms, complete the task or locate the contract, and recognize an
+unexpected result? Record unresolved audience or behavior questions for review. Do not invent product policy to
+resolve an editorial ambiguity. Mechanical checks supplement this reading review.
 
 A documentation change lands in the same pull request as the behavior change it describes. Documentation that trails
 the code it documents is treated as a defect in that pull request.
